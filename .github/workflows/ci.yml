@@ -56,7 +56,7 @@ jobs:
       - build
     runs-on: ubuntu-latest
     env:
-      COVERAGE_OUTPUT_PATH: artifacts/coverage
+      COVERAGE_OUTPUT_PATH: ${{ github.workspace }}/artifacts/coverage
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -93,13 +93,12 @@ jobs:
     needs:
       - build
     env:
-      STRYKER_OUTPUT_PATH: artifacts/stryker
-      PROJECT_PATH: source/gen
+      STRYKER_OUTPUT_PATH: ${{ github.workspace }}/artifacts/stryker
     runs-on: ubuntu-latest
     steps:
       - name: Setup Variables
         # https://stryker-mutator.io/docs/stryker-net/reporters/#markdown-summary-reporter
-        run: echo "STRYKER_REPORT_PATH=${{ env.PROJECT_PATH}}/${{ env.STRYKER_OUTPUT_PATH }}/mutation-report.md" >> $GITHUB_ENV
+        run: echo "STRYKER_REPORT_PATH=${{ env.STRYKER_OUTPUT_PATH }}/mutation-report.md" >> $GITHUB_ENV
       - name: Checkout
         uses: actions/checkout@v4
         with:
@@ -118,7 +117,7 @@ jobs:
         run: dotnet build ${{ env.SLN_PATH }} --configuration Debug --no-restore
       - name: Run dotnet-stryker
         run: dotnet stryker --config-file stryker-config.yaml --output ${{ env.STRYKER_OUTPUT_PATH }}
-        working-directory: ${{ env.PROJECT_PATH }}
+        working-directory: source/gen
       - name: Add Mutation Test PR Comment
         uses: marocchino/sticky-pull-request-comment@v2
         if: github.event_name == 'pull_request'
