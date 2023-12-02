@@ -55,10 +55,9 @@ jobs:
     needs:
       - build
     runs-on: ubuntu-latest
+    env:
+      COVERAGE_OUTPUT_PATH: ${{ github.workspace }}/artifacts/coverage
     steps:
-      - name: Setup Variables
-        run: |
-          echo "COVERAGE_OUTPUT_PATH=${{ github.workspace }}/artifacts/coverage" >> $GITHUB_ENV
       - name: Checkout
         uses: actions/checkout@v4
         with:
@@ -72,11 +71,11 @@ jobs:
       - name: Build
         run: dotnet build ${{ env.SLN_PATH }} --configuration Release --no-restore
       - name: Test
-        run: dotnet test ${{ env.SLN_PATH }} --configuration Release --no-build --collect:"XPlat Code Coverage" --logger trx --results-directory $COVERAGE_OUTPUT_PATH
+        run: dotnet test ${{ env.SLN_PATH }} --configuration Release --no-build --collect:"XPlat Code Coverage" --logger trx --results-directory ${{ env.COVERAGE_OUTPUT_PATH }}
       - name: Code Coverage Summary Report
         uses: irongut/CodeCoverageSummary@v1.3.0
         with:
-          filename: '$COVERAGE_OUTPUT_PATH/*/coverage.cobertura.xml'
+          filename: '${{ env.COVERAGE_OUTPUT_PATH }}/*/coverage.cobertura.xml'
           badge: true
           format: 'markdown'
           output: 'both'
@@ -93,13 +92,13 @@ jobs:
     name: Mutation Testing
     needs:
       - build
+    env:
+      STRYKER_OUTPUT_PATH: ${{ github.workspace }}/artifacts/stryker
     runs-on: ubuntu-latest
     steps:
       - name: Setup Variables
         # https://stryker-mutator.io/docs/stryker-net/reporters/#markdown-summary-reporter
-        run: |
-          echo "STRYKER_OUTPUT_PATH=${{ github.workspace }}/artifacts/stryker" >> $GITHUB_ENV
-          echo "STRYKER_REPORT_PATH=$STRYKER_OUTPUT_PATH/mutation-report.md" >> $GITHUB_ENV
+        run: echo "STRYKER_REPORT_PATH=${{ env.STRYKER_OUTPUT_PATH }}/mutation-report.md" >> $GITHUB_ENV
       - name: Checkout
         uses: actions/checkout@v4
         with:
