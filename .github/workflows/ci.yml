@@ -56,7 +56,7 @@ jobs:
       - build
     runs-on: ubuntu-latest
     env:
-      COVERAGE_OUTPUT_PATH: ${{ github.workspace }}/artifacts/coverage
+      COVERAGE_OUTPUT_PATH: artifacts/coverage
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -98,7 +98,7 @@ jobs:
     steps:
       - name: Setup Variables
         # https://stryker-mutator.io/docs/stryker-net/reporters/#markdown-summary-reporter
-        run: echo "STRYKER_REPORT_PATH=${{ env.STRYKER_OUTPUT_PATH }}/mutation-report.md" >> $GITHUB_ENV
+        run: echo "STRYKER_REPORT_PATH=${{ env.STRYKER_OUTPUT_PATH }}/reports/mutation-report.md" >> $GITHUB_ENV
       - name: Checkout
         uses: actions/checkout@v4
         with:
